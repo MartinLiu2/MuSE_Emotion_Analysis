@@ -1,0 +1,19 @@
+Uggh I think the project. That I've been the most proud of personally. Ugh was back in highschool for a competition, um, you applied for
+
+a grant. And. If you had a, convincing (idea) idea that could help the world in some way, they would give you a thousand dollars to. Try and make it happen, and then you could present on that in a competition and try to earn scholarship money. 
+
+Uggh and, what me and my team tried to do was make a smart phone app that, prevented texting and driving, in some way? 
+
+Uhh, so what we did is, we had a. Uggh, we used (the) Google API, to track, facial movements to the camera. 
+
+Ugh and then, we logged that. And, ugh well we had a bunch of trials where we set up a little obstacle course in a, uggh parking lot, and. We had student volunteers, ugh, drive around in the lot well doing like, responding to fake texts in our app that was tracking our facial movement. 
+
+And then after all the trials were done, we fed the data into, a neuro-network, and that was really fun to learn about; I found that super interesting. 
+
+Uggh, just trying to code that from scratch and also just to learn about it, umm. 
+
+And then it ended up, being able to recognize, ugh the patterns of someone texing and driving like, someone looking up and down from their phone. 
+
+Uggh, it worked pretty well, we didn't have. Ugh alot of verification data, but, you know, we presented that and, I was really proud of it, it didn't,
+
+ win sch- ugh scholarship money, but I, it was still one of my favourite things I've ever done.

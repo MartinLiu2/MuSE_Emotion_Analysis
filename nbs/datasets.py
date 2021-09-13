@@ -15,51 +15,59 @@ class TemporalDataset(Dataset):
     def __init__(self, dataset_file_path, file_name_list):
         dataset_file = pd.read_csv(dataset_file_path, index_col=0)
         dataset_subset = dataset_file.loc[file_name_list]
-
         self.file_name_list = file_name_list
-        self.visual_features = dataset_subset.visual_features.to_dict()
-        self.acoustic_features = dataset_subset.acoustic_features.to_dict()
+        # self.visual_features = dataset_subset.visual_features.to_dict()
+        self.acoustic_features = dataset_subset.audio_features.to_dict()
         self.lexical_features = dataset_subset.lexical_features.to_dict()
-        self.emotion_labels = dataset_subset.emotion_labels.to_dict()
+        # self.emotion_labels = dataset_subset.emotion_labels.to_dict()
 
         self.a_labels = dataset_subset.a_labels.to_dict()
         self.v_labels = dataset_subset.v_labels.to_dict()
-        self.d_labels = dataset_subset.d_labels.to_dict()
+        # self.d_labels = dataset_subset.d_labels.to_dict()
 
-        self.speakers = dataset_subset.speakers.to_dict()
+        # self.speakers = dataset_subset.speakers.to_dict()
 
     def __getitem__(self, idx):
         file_name = self.file_name_list[idx]
         
-        visual_feature = np.load(self.visual_features[file_name])
+        # visual_feature = np.load(self.visual_features[file_name])
         acoustic_feature = np.load(self.acoustic_features[file_name])
         lexical_feature = np.load(self.lexical_features[file_name])
-        emotion_label = self.emotion_labels[file_name]
+        # emotion_label = self.emotion_labels[file_name]
 
         v_label = self.v_labels[file_name]
         a_label = self.a_labels[file_name]
-        d_label = self.d_labels[file_name]
+        # d_label = self.d_labels[file_name]
         
         # Spontaneity label
-        if file_name[7] == 's':
-            s_label = 1
-        elif file_name[7] == 'i':
-            s_label = 0
-        else:
-            raise ValueError('Invalid spontaneity label')
+        s_label = 0
+        # if file_name[7] == 's':
+        #     s_label = 1
+        # elif file_name[7] == 'i':
+        #     s_label = 0
+        # else:
+        #     raise ValueError('Invalid spontaneity label')
         
-        speaker = self.speakers[file_name]
+        # speaker = self.speakers[file_name]
+
+        # return (
+        #     visual_feature,
+        #     acoustic_feature,
+        #     lexical_feature,
+        #     emotion_label,
+        #     v_label,
+        #     a_label,
+        #     d_label,
+        #     s_label,
+        #     speaker
+        # )
 
         return (
-            visual_feature,
             acoustic_feature,
             lexical_feature,
-            emotion_label,
             v_label,
             a_label,
-            d_label,
-            s_label,
-            speaker
+            s_label
         )
 
     def __len__(self):
@@ -71,54 +79,70 @@ class TemporalDataset(Dataset):
         return a_label
 
 
-def padding(features_tmp):
-    features_dim = features_tmp[0].shape[1]
+def padding(features_tmp):  # Adjust to match acoustic features
+    features_dim = 0
     lengths = [feature.shape[0] for feature in features_tmp]
-
-    features = torch.zeros((len(features_tmp), max(lengths), features_dim)).float()
+ 
+    features = torch.zeros((len(features_tmp), max(lengths))).float()
     for i, feature in enumerate(features_tmp):
         end = lengths[i]
-        features[i, :end, :] = torch.FloatTensor(feature[:end, :])
+        features[i, :end] = torch.FloatTensor(feature[:end])
 
     return features, torch.LongTensor(lengths)
 
 
-def collate_fn_temporal_dataset(data):
+def collate_fn_temporal_dataset(data): # Need to change
+    # (
+    #     visual_features_tmp,
+    #     acoustic_features_tmp,
+    #     lexical_features,
+    #     emotion_labels,
+    #     v_labels,
+    #     a_labels,
+    #     d_labels,
+    #     s_labels,
+    #     speakers
+    # ) = zip(*data)
     (
-        visual_features_tmp,
         acoustic_features_tmp,
         lexical_features,
-        emotion_labels,
         v_labels,
         a_labels,
-        d_labels,
-        s_labels,
-        speakers
+        s_labels
     ) = zip(*data)
 
-    visual_features, visual_lengths = padding(visual_features_tmp)
+    # visual_features, visual_lengths = padding(visual_features_tmp)
+
     acoustic_features, acoustic_lengths = padding(acoustic_features_tmp)
 
     lexical_features = torch.FloatTensor(lexical_features)
-    emotion_labels = torch.LongTensor(emotion_labels)
+    # emotion_labels = torch.LongTensor(emotion_labels)
 
     v_labels = torch.LongTensor(v_labels)
     a_labels = torch.LongTensor(a_labels)
-    d_labels = torch.LongTensor(d_labels)
+    # d_labels = torch.LongTensor(d_labels)
     s_labels = torch.LongTensor(s_labels)
     
+    # return (
+    #     visual_features,
+    #     visual_lengths,
+    #     acoustic_features,
+    #     acoustic_lengths,
+    #     lexical_features,
+    #     emotion_labels,
+    #     v_labels,
+    #     a_labels,
+    #     d_labels,
+    #     s_labels, 
+    #     speakers
+    # )
     return (
-        visual_features,
-        visual_lengths,
         acoustic_features,
         acoustic_lengths,
         lexical_features,
-        emotion_labels,
         v_labels,
         a_labels,
-        d_labels,
-        s_labels, 
-        speakers
+        s_labels
     )
 
 
